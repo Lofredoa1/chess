@@ -24,13 +24,32 @@ def main():
     screen.fill(pygame.Color('white'))
     gs = ChessEngine.GameState()
     load_images()
-    draw_game_state(screen, gs)
     running = True
+    sqSelected = () #no square is initially selected (tuple:(row,col))
+    playerClicks = [] #keeps track of the player clicks from initial to final location (two tuples: [(row,col), (row, col))
     while running:
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 running = False
-        
+            elif e.type == pygame.MOUSEBUTTONDOWN:
+                location = pygame.mouse.get_pos() #(x,y) location of mouse
+                # if adding a side panel will need to modify location below
+                col = location[0]//SQ_SIZE
+                row = location[1]//SQ_SIZE
+                if sqSelected == (row, col): #if user clicks the same square twice
+                    sqSelected = () #deselects square
+                    playerClicks = [] #clears the player clicks
+                else:
+                    sqSelected = (row, col)
+                    playerClicks.append(sqSelected)
+                if len(playerClicks) == 2:
+                    move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                    print(move.get_chess_notation())
+                    gs.make_move(move)
+                    sqSelected = () #reset the user clicks
+                    playerClicks = []
+                                    
+        draw_game_state(screen, gs)      
         clock.tick(FPS)
         pygame.display.flip()
  
