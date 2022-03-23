@@ -23,6 +23,8 @@ def main():
     clock = pygame.time.Clock()
     screen.fill(pygame.Color('white'))
     gs = ChessEngine.GameState()
+    validMoves = gs.get_valid_moves()
+    moveMade = False #flag variable for when a move is made
     load_images()
     running = True
     sqSelected = () #no square is initially selected (tuple:(row,col))
@@ -31,6 +33,7 @@ def main():
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 running = False
+            #mouse handler
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 location = pygame.mouse.get_pos() #(x,y) location of mouse
                 # if adding a side panel will need to modify location below
@@ -45,10 +48,21 @@ def main():
                 if len(playerClicks) == 2:
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.get_chess_notation())
-                    gs.make_move(move)
+                    if move in validMoves:
+                        gs.make_move(move)
+                        moveMade = True
                     sqSelected = () #reset the user clicks
                     playerClicks = []
-                                    
+            #key handler
+            elif e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_z: #undo move when 'z' is pressed
+                    gs.undo_move()
+                    moveMade = True
+                    
+        if moveMade:
+            validMoves = gs.get_valid_moves()
+            moveMade = False   
+                                     
         draw_game_state(screen, gs)      
         clock.tick(FPS)
         pygame.display.flip()
