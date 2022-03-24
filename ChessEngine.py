@@ -15,13 +15,14 @@ class GameState():
         self.board = [
             ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+            ["--", "--", "--", "wP", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "bP", "--", "--", "--", "--"],
             ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
-        ]
+            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
+        self.moveFunctions = {'P': self.get_pawn_moves, 'R': self.get_rook_moves, 'N': self.get_knight_moves,
+                              'B': self.get_bishop_moves, 'Q': self.get_queen_moves, 'K': self.get_king_moves}
         self.whiteToMove = True
         self.moveLog = []
         
@@ -49,23 +50,59 @@ class GameState():
         for r in range(len(self.board)): #number of rows
             for c in range(len(self.board[r])): #number of cols in a given row
                 turn = self.board[r][c][0]
-                if (turn == 'w' and self.whiteToMove) and (turn == 'b' and not self.whiteToMove):
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[r][c][1]
-                    if piece == 'P':
-                        self.get_pawn_moves(r, c, moves)
-                    elif piece == 'R':
-                        self.get_rook_moves(r, c, moves)
+                    self.moveFunctions[piece](r, c, moves)
         return moves
     
     
     #get all pawn moves 
     def get_pawn_moves(self, r, c, moves):
-        pass
+        if self.whiteToMove: #white pawn move
+            if self.board[r-1][c] == "--": #1 square advance
+                moves.append(Move((r, c), (r-1, c), self.board))
+                if r == 6 and self.board[r-2][c] == "--": #2 square advance
+                    moves.append(Move((r, c), (r-2, c), self.board))
+            if c-1 >= 0: #left capture
+                if self.board[r-1][c-1][0] == "b":
+                    moves.append(Move((r, c), (r-1, c-1), self.board))
+            if c+1 <= 7: #right capture
+                if self.board[r-1][c+1][0] == "b":
+                    moves.append(Move((r, c), (r-1, c+1), self.board))
+        else: #black pawn moves
+            if self.board[r+1][c] == "--": #1 square advance
+                moves.append(Move((r, c), (r+1, c), self.board))
+                if r == 1 and self.board[r+2][c] == "--": #2 square advance
+                    moves.append(Move((r, c), (r+2, c), self.board))
+            if c-1 >= 0: #right capture
+                if self.board[r+1][c-1][0] == "w":
+                    moves.append(Move((r, c), (r+1, c-1), self.board))
+            if c+1 <=7: #left capture
+                if self.board[r+1][c+1][0] == "w":
+                    moves.append(Move((r, c), (r+1, c+1), self.board))
+    
+    
     
     #get all rook moves
     def get_rook_moves(self, r, c, moves):
         pass                
-            
+    
+    
+    #get all knight moves
+    def get_knight_moves(self, r, c, moves):
+        pass
+    
+    #get all bishop moves
+    def get_bishop_moves(self, r, c, moves):
+        pass
+    
+    #get all queen moves
+    def get_queen_moves(self, r, c, moves):
+        pass
+              
+    #get all king moves
+    def get_king_moves(self, r, c, moves):
+        pass          
     
         
 #Takes a Move as a parameter and executes it(this will not work for castling, en-passant, and pawn promotion)        
@@ -87,7 +124,6 @@ class Move():
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
         self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
-        print(self.moveID)
         
     def __eq__(self, other):
         if isinstance(other, Move):
