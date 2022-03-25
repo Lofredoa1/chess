@@ -82,7 +82,7 @@ class GameState():
     
     #get all rook moves
     def get_rook_moves(self, r, c, moves):
-        directions = ((-1, 0), (0, -1), (1,0), (0, 1))
+        directions = ((-1, 0), (0, -1), (1, 0), (0, 1))
         enemyColor = "b" if self.whiteToMove else "w"
         for d in directions:
             for i in range(1, 8):
@@ -102,7 +102,16 @@ class GameState():
     
     #get all knight moves
     def get_knight_moves(self, r, c, moves):
-        pass
+        knightMoves = ((-2, -1), (-2, 1), (2, -1), (2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2))
+        enemyColor = "b" if self.whiteToMove else "w"
+        for m in knightMoves:
+            endRow = r + m[0]
+            endCol = c + m[1]
+            if 0 <= endRow < 8 and 0 <= endCol < 8:
+                endPiece = self.board[endRow][endCol]
+                if endPiece[0] == enemyColor or endPiece[0] == "-":
+                    moves.append(Move((r, c), (endRow, endCol), self.board))
+                     
     
     #get all bishop moves
     def get_bishop_moves(self, r, c, moves):
