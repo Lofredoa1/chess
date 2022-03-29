@@ -4,6 +4,7 @@
 
 from string import whitespace
 from time import sleep
+from tokenize import endpats
 
 
 class GameState():
@@ -140,7 +141,15 @@ class GameState():
               
     #get all king moves
     def get_king_moves(self, r, c, moves):
-        pass          
+        kingMoves = ((-1, 1), (-1, 0), (-1, -1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1))
+        enemyColor = "b" if self.whiteToMove else "w"
+        for i in range(8):
+            endRow = r + kingMoves[i][0]
+            endCol = c + kingMoves[i][1]
+            if 0 <= endRow < 8 and 0 <= endCol < 8:
+                endPiece = self.board[endRow][endCol]
+                if endPiece[0] == enemyColor or endPiece[0] == "-":
+                    moves.append(Move((r, c), (endRow, endCol), self.board))          
     
         
 #Takes a Move as a parameter and executes it(this will not work for castling, en-passant, and pawn promotion)        
