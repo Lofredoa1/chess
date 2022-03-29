@@ -1,5 +1,6 @@
 # this class will be responsible for handling user input and displaying the game state object
 
+from sqlite3 import SQLITE_ALTER_TABLE
 from tkinter import W, Widget
 import pygame
 import ChessEngine
@@ -51,8 +52,10 @@ def main():
                     if move in validMoves:
                         gs.make_move(move)
                         moveMade = True
-                    sqSelected = () #reset the user clicks
-                    playerClicks = []
+                        sqSelected = () #reset the user clicks
+                        playerClicks = []
+                    else: 
+                        playerClicks = [sqSelected]
             #key handler
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_z: #undo move when 'z' is pressed
