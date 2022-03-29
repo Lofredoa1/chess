@@ -135,7 +135,8 @@ class GameState():
     
     #get all queen moves
     def get_queen_moves(self, r, c, moves):
-        pass
+        self.get_bishop_moves(r, c, moves)
+        self.get_rook_moves(r, c, moves)
               
     #get all king moves
     def get_king_moves(self, r, c, moves):
