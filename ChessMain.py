@@ -2,6 +2,7 @@
 
 from sqlite3 import SQLITE_ALTER_TABLE
 from tkinter import W, Widget
+from xml.dom import ValidationErr
 import pygame
 import ChessEngine
 
@@ -49,12 +50,13 @@ def main():
                 if len(playerClicks) == 2:
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.get_chess_notation())
-                    if move in validMoves:
-                        gs.make_move(move)
-                        moveMade = True
-                        sqSelected = () #reset the user clicks
-                        playerClicks = []
-                    else: 
+                    for i in range(len(validMoves)):
+                        if move == validMoves[i]:
+                            gs.make_move(validMoves[i])
+                            moveMade = True
+                            sqSelected = () #reset the user clicks
+                            playerClicks = []
+                    if not moveMade: 
                         playerClicks = [sqSelected]
             #key handler
             elif e.type == pygame.KEYDOWN:
